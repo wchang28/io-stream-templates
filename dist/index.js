@@ -45,12 +45,16 @@ var WritableTemplate = /** @class */ (function (_super) {
     __extends(WritableTemplate, _super);
     function WritableTemplate(factory) {
         var _this = _super.call(this) || this;
-        _this._writable = factory(); // create the internal writable
+        var ret = factory(); // create the internal writable
+        _this._writable = ret.writable;
+        var endInternalWritableWhenFinish = (ret.keepInternalWritableOpenWhenFinish ? false : true);
         _this._writable.on("error", function (err) {
             _this.emit("error", err);
         });
         _this.on("finish", function () {
-            _this._writable.end(); // end the writable
+            if (endInternalWritableWhenFinish) {
+                _this._writable.end(); // end the writable
+            }
         });
         return _this;
     }

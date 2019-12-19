@@ -8,7 +8,10 @@ export declare class ReadableTemplate extends Readable {
 }
 export declare class WritableTemplate extends Writable {
     private _writable;
-    constructor(factory: () => Writable);
+    constructor(factory: () => {
+        writable: Writable;
+        keepInternalWritableOpenWhenFinish?: boolean;
+    });
     protected get internalWritable(): Writable;
     _write(chunk: any, encoding: string, callback: (error?: Error | null) => void): void;
 }

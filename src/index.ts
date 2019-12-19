@@ -26,15 +26,19 @@ export class ReadableTemplate extends Readable {
 
 export class WritableTemplate extends Writable {
     private _writable: Writable;    // internal writable
-    constructor(factory: () => Writable) {
+    constructor(factory: () => {writable: Writable, keepInternalWritableOpenWhenFinish?: boolean}) {
         super();
-        this._writable = factory(); // create the internal writable
+        const ret = factory(); // create the internal writable
+        this._writable = ret.writable;
+        const endInternalWritableWhenFinish = (ret.keepInternalWritableOpenWhenFinish ? false : true);
 
         this._writable.on("error", (err) => {
             this.emit("error", err);
         });
         this.on("finish", () => {   // end() was called on this object
-            this._writable.end();   // end the writable
+            if (endInternalWritableWhenFinish) {
+                this._writable.end();   // end the writable
+            }
         });
     }
 
